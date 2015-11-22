@@ -1,46 +1,36 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.IO.IsolatedStorage;
+using System.Xml.Serialization;
+using Wifi.TaskAgent;
+using Wifi.TaskAgent.Common;
 using Wifi.TimeRegistration.Resources;
 
 namespace Wifi.TimeRegistration.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        NetworkUtility _networkUtility;
+
         public MainViewModel()
         {
+            _networkUtility = new NetworkUtility();
             this.Items = new ObservableCollection<ItemViewModel>();
         }
 
-        /// <summary>
-        /// A collection for ItemViewModel objects.
-        /// </summary>
         public ObservableCollection<ItemViewModel> Items { get; private set; }
 
-        private string _sampleProperty = "Sample Runtime Property Value";
-        /// <summary>
-        /// Sample ViewModel property; this property is used in the view to display its value using a Binding
-        /// </summary>
-        /// <returns></returns>
+        private string _sampleProperty = "";
         public string SampleProperty
         {
             get
             {
-                return _sampleProperty;
-            }
-            set
-            {
-                if (value != _sampleProperty)
-                {
-                    _sampleProperty = value;
-                    NotifyPropertyChanged("SampleProperty");
-                }
+                return string.Format("Current week number: {0}", _networkUtility.GetWeekNumber());
             }
         }
 
-        /// <summary>
-        /// Sample property that returns a localized string
-        /// </summary>
         public string LocalizedSampleProperty
         {
             get
@@ -55,30 +45,107 @@ namespace Wifi.TimeRegistration.ViewModels
             private set;
         }
 
-        /// <summary>
-        /// Creates and adds a few ItemViewModel objects into the Items collection.
-        /// </summary>
         public void LoadData()
         {
-            // Sample data; replace with real data
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime one", LineTwo = "Maecenas praesent accumsan bibendum", LineThree = "Facilisi faucibus habitant inceptos interdum lobortis nascetur pharetra placerat pulvinar sagittis senectus sociosqu" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime two", LineTwo = "Dictumst eleifend facilisi faucibus", LineThree = "Suscipit torquent ultrices vehicula volutpat maecenas praesent accumsan bibendum dictumst eleifend facilisi faucibus" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime three", LineTwo = "Habitant inceptos interdum lobortis", LineThree = "Habitant inceptos interdum lobortis nascetur pharetra placerat pulvinar sagittis senectus sociosqu suscipit torquent" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime four", LineTwo = "Nascetur pharetra placerat pulvinar", LineThree = "Ultrices vehicula volutpat maecenas praesent accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime five", LineTwo = "Maecenas praesent accumsan bibendum", LineThree = "Maecenas praesent accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos interdum lobortis nascetur" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime six", LineTwo = "Dictumst eleifend facilisi faucibus", LineThree = "Pharetra placerat pulvinar sagittis senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime seven", LineTwo = "Habitant inceptos interdum lobortis", LineThree = "Accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos interdum lobortis nascetur pharetra placerat" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime eight", LineTwo = "Nascetur pharetra placerat pulvinar", LineThree = "Pulvinar sagittis senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent accumsan bibendum" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime nine", LineTwo = "Maecenas praesent accumsan bibendum", LineThree = "Facilisi faucibus habitant inceptos interdum lobortis nascetur pharetra placerat pulvinar sagittis senectus sociosqu" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime ten", LineTwo = "Dictumst eleifend facilisi faucibus", LineThree = "Suscipit torquent ultrices vehicula volutpat maecenas praesent accumsan bibendum dictumst eleifend facilisi faucibus" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime eleven", LineTwo = "Habitant inceptos interdum lobortis", LineThree = "Habitant inceptos interdum lobortis nascetur pharetra placerat pulvinar sagittis senectus sociosqu suscipit torquent" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime twelve", LineTwo = "Nascetur pharetra placerat pulvinar", LineThree = "Ultrices vehicula volutpat maecenas praesent accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime thirteen", LineTwo = "Maecenas praesent accumsan bibendum", LineThree = "Maecenas praesent accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos interdum lobortis nascetur" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime fourteen", LineTwo = "Dictumst eleifend facilisi faucibus", LineThree = "Pharetra placerat pulvinar sagittis senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime fifteen", LineTwo = "Habitant inceptos interdum lobortis", LineThree = "Accumsan bibendum dictumst eleifend facilisi faucibus habitant inceptos interdum lobortis nascetur pharetra placerat" });
-            this.Items.Add(new ItemViewModel() { LineOne = "runtime sixteen", LineTwo = "Nascetur pharetra placerat pulvinar", LineThree = "Pulvinar sagittis senectus sociosqu suscipit torquent ultrices vehicula volutpat maecenas praesent accumsan bibendum" });
+            NetworksContainer networkContainer = _networkUtility.GetNetworksFromFile();
+            if (networkContainer != null)
+            {
+                DisplayNetworks(networkContainer);
+            }
 
             this.IsDataLoaded = true;
+        }
+
+        public void DeleteNetwork(string networkName)
+        {
+            NetworksContainer contanier = _networkUtility.GetNetworksFromFile();
+            if (contanier != null)
+            {
+                for (int i = 0; i < contanier.Networks.Count; i++)
+                {
+                    if (contanier.Networks[i].NetworkName == networkName)
+                    {
+                        contanier.Networks.Remove(contanier.Networks[i]);
+                        _networkUtility.SaveNetworksContainer(contanier);
+                    }
+                }
+            }
+        }
+
+        public void DeleteNetworkHours(string networkName)
+        {
+            var contanier = _networkUtility.GetNetworksFromFile();
+            if (contanier != null)
+            {
+                foreach (NetworkItem item in contanier.Networks)
+                {
+                    if (item.NetworkName == networkName)
+                    {
+                        item.MinutesInWeek = 0;
+                        _networkUtility.SaveNetworksContainer(contanier);
+                    }
+                }
+            }
+        }
+
+        public void InializeNetworkInformation()
+        {
+            string currentNetworkName = _networkUtility.GetCurrentNetworkName();
+            NetworksContainer contanier = _networkUtility.GetNetworksFromFile();
+            if (contanier == null)
+            {
+                contanier = new NetworksContainer();
+                _networkUtility.AddCurrentNetworkToFile(contanier, currentNetworkName);
+                return;
+            }
+            else
+            {
+                bool networkFound = false;
+                foreach (NetworkItem item in contanier.Networks)
+                {
+                    networkFound |= item.NetworkName == currentNetworkName;
+                }
+
+                if (!networkFound)
+                    _networkUtility.AddCurrentNetworkToFile(contanier, currentNetworkName);
+            }
+        }
+
+        private void DisplayNetworks(NetworksContainer networksContainer)
+        {
+            this.Items.Clear();
+            foreach (NetworkItem network in networksContainer.Networks)
+            {
+                var time = TimeSpan.FromMinutes(network.MinutesInWeek);
+                string formatedTime = string.Format("{0:hh}:{1:mm}", time, time);
+                this.Items.Add(new ItemViewModel() { LineOne = network.NetworkName, LineTwo = formatedTime });
+            }
+        }
+
+        private NetworksContainer GetNetworkNetworksContainer()
+        {
+            NetworksContainer container = null;
+            try
+            {
+                using (IsolatedStorageFile store = IsolatedStorageFile.GetUserStoreForApplication())
+                {
+                    if (!store.FileExists("wifi.xml"))
+                    {
+                        return null;
+                    }
+                    using (IsolatedStorageFileStream stream = store.OpenFile("wifi.xml", FileMode.Open, FileAccess.Read))
+                    {
+                        XmlSerializer serializer = new XmlSerializer(typeof(NetworksContainer));
+                        container = (NetworksContainer)serializer.Deserialize(stream);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return container;
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

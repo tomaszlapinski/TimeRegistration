@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeRegistration", "TimeRegistration\TimeRegistration.csproj", "{7D82F783-86D1-4B4F-BFE9-8682913C31FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wifi.TimeRegistration", "Wifi.TimeRegistration\Wifi.TimeRegistration.csproj", "{7D82F783-86D1-4B4F-BFE9-8682913C31FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wifi.TaskAgent", "Wifi.TaskAgent\Wifi.TaskAgent.csproj", "{24941BE0-46BB-47A8-BACA-856EB124DC4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,18 @@ Global
 		{7D82F783-86D1-4B4F-BFE9-8682913C31FE}.Release|x86.ActiveCfg = Release|x86
 		{7D82F783-86D1-4B4F-BFE9-8682913C31FE}.Release|x86.Build.0 = Release|x86
 		{7D82F783-86D1-4B4F-BFE9-8682913C31FE}.Release|x86.Deploy.0 = Release|x86
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Debug|ARM.ActiveCfg = Debug|ARM
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Debug|ARM.Build.0 = Debug|ARM
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Debug|x86.ActiveCfg = Debug|x86
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Debug|x86.Build.0 = Debug|x86
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Release|ARM.ActiveCfg = Release|ARM
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Release|ARM.Build.0 = Release|ARM
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Release|x86.ActiveCfg = Release|x86
+		{24941BE0-46BB-47A8-BACA-856EB124DC4A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
