@@ -85,6 +85,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common\NetworkUtility.cs" />
+    <Compile Include="Common\TimeHelper.cs" />
     <Compile Include="NetworksContainer.cs" />
     <Compile Include="ScheduledAgent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

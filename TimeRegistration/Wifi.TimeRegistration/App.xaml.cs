@@ -14,7 +14,7 @@ namespace Wifi.TimeRegistration
     public partial class App : Application
     {
         private static MainViewModel viewModel = null;
-       public static MainViewModel ViewModel
+        public static MainViewModel ViewModel
         {
             get
             {
@@ -81,10 +81,7 @@ namespace Wifi.TimeRegistration
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
             // Ensure that application state is restored appropriately
-            if (!App.ViewModel.IsDataLoaded)
-            {
-                App.ViewModel.LoadData();
-            }
+            App.ViewModel.LoadData();
         }
 
         // Code to execute when the application is deactivated (sent to background)

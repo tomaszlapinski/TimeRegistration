@@ -11,6 +11,7 @@ namespace Wifi.TimeRegistration
     public class TaskAgent : ScheduledTaskAgent
     {
         NetworkUtility _networkUtility = new NetworkUtility();
+        object _lock = new object();
 
         static TaskAgent()
         {
@@ -34,36 +35,68 @@ namespace Wifi.TimeRegistration
             {
                 ScheduledActionService.LaunchForTest(task.Name, TimeSpan.FromSeconds(60));
 
-                UpdateTime();
+                UpdateNetworkInformation();
                 NotifyComplete();
             }
             catch (Exception e)
             {
-
+                MessageBox.Show("Error. There is something wrong with the background agent");
+                return;
             }
         }
 
-        private void UpdateTime()
+        private void UpdateNetworkInformation()
         {
             NetworksContainer container = _networkUtility.GetNetworksFromFile();
-            string networkName = _networkUtility.GetCurrentNetworkName();
+            if (container == null)
+            {
+                MessageBox.Show("Error. There is something wrong with the contaner...");
+                return;
+            }
 
-            foreach (var item in container.Networks)
+            string networkName = _networkUtility.GetCurrentNetworkName();
+            if (!string.IsNullOrEmpty(networkName))
+            {
+                NetworkItem networkItem = GetNetworkItem(container, networkName);
+                if (networkItem == null)
+                {
+                    networkItem = new NetworkItem();
+                    networkItem.NetworkName = networkName;
+                    networkItem.WeekNumber = TimeHelper.GetWeekNumber();
+                    networkItem.MinutesInWeek += 1;
+                    container.Networks.Add(networkItem);
+
+                    ShellToast toast = new ShellToast();
+                    toast.Content = string.Format("New network: {0} detected. Date: {1}. Time {2}", networkName, DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString());
+                    toast.Title = "Info";
+                    toast.Show();
+                }
+                else
+                {
+                    if (TimeHelper.GetWeekNumber() != networkItem.WeekNumber)
+                    {
+                        networkItem.LastWeekHours = networkItem.MinutesInWeek;
+                        networkItem.MinutesInWeek = 0;
+                        networkItem.WeekNumber = TimeHelper.GetWeekNumber();
+                    }
+
+                    networkItem.MinutesInWeek += 1;
+                }
+                _networkUtility.SaveNetworksContainer(container);
+            }
+        }
+
+        private NetworkItem GetNetworkItem(NetworksContainer networkContainer, string networkName)
+        {
+            foreach (var item in networkContainer.Networks)
             {
                 if (item.NetworkName == networkName)
                 {
-                    if (_networkUtility.GetWeekNumber() != item.WeekNumber)
-                    {
-                        item.MinutesInWeek = 0;
-                        item.WeekNumber = _networkUtility.GetWeekNumber();
-                    }
-
-                    item.MinutesInWeek += 1;
+                    return item;
                 }
-
             }
 
-            _networkUtility.SaveNetworksContainer(container);
+            return null;
         }
     }
 }

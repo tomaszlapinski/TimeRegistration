@@ -119,11 +119,6 @@ namespace Wifi.TaskAgent.Common
                     SaveNetworksContainer(container);
                 }
             }
-        }
-
-        public int GetWeekNumber()
-        {
-            return CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(DateTime.Now, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-        }
+        }       
     }
 }

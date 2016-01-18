@@ -27,9 +27,9 @@ namespace Wifi.TimeRegistration.ViewModels
         {
             get
             {
-                return string.Format("Current week number: {0}", _networkUtility.GetWeekNumber());
+                return string.Format("Time Registration - [ Current week : {0} ]", TimeHelper.GetWeekNumber());
             }
-        }
+        }    
 
         public string LocalizedSampleProperty
         {
@@ -88,7 +88,7 @@ namespace Wifi.TimeRegistration.ViewModels
             }
         }
 
-        public void InializeNetworkInformation()
+        public void InitializeNetworkInformation()
         {
             string currentNetworkName = _networkUtility.GetCurrentNetworkName();
             NetworksContainer contanier = _networkUtility.GetNetworksFromFile();
@@ -117,9 +117,17 @@ namespace Wifi.TimeRegistration.ViewModels
             foreach (NetworkItem network in networksContainer.Networks)
             {
                 var time = TimeSpan.FromMinutes(network.MinutesInWeek);
-                string formatedTime = string.Format("{0:hh}:{1:mm}", time, time);
+                var lastWeek = string.Empty;
+                if (network.LastWeekHours > 0)
+                {
+                    var weekTime = TimeSpan.FromMinutes(network.LastWeekHours);
+                    lastWeek = string.Format("  [ Last week worked: {0:hh}:{1:mm} ]", weekTime, weekTime);
+                }
+                    
+                string formatedTime = string.Format("{0:hh}:{1:mm} {2}", time, time, lastWeek);
                 this.Items.Add(new ItemViewModel() { LineOne = network.NetworkName, LineTwo = formatedTime });
             }
+
         }
 
         private NetworksContainer GetNetworkNetworksContainer()

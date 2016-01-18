@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Wifi.TimeRegistration.Resources;
 using Microsoft.Phone.Scheduler;
 using Wifi.TimeRegistration.ViewModels;
 
@@ -27,7 +22,7 @@ namespace Wifi.TimeRegistration
         {
             if (!App.ViewModel.IsDataLoaded)
             {
-                App.ViewModel.InializeNetworkInformation();
+                App.ViewModel.InitializeNetworkInformation();
                 App.ViewModel.LoadData();
 
                 StartPeriodicAgent();
@@ -39,11 +34,11 @@ namespace Wifi.TimeRegistration
             ApplicationBar = new ApplicationBar();
 
             ApplicationBarMenuItem refreshMenuItem = new ApplicationBarMenuItem("Refresh");
-            refreshMenuItem.Click += appBarMenuItem_Click;
+            refreshMenuItem.Click += AppBarMenuItem_Click;
             ApplicationBar.MenuItems.Add(refreshMenuItem);
         }
 
-        void appBarMenuItem_Click(object sender, EventArgs e)
+        void AppBarMenuItem_Click(object sender, EventArgs e)
         {
             App.ViewModel.LoadData();
         }
@@ -99,14 +94,20 @@ namespace Wifi.TimeRegistration
         {
             ItemViewModel vm = GetViewModel(sender);
             if (vm != null)
+            {
                 App.ViewModel.DeleteNetworkHours(vm.LineOne);
+                App.ViewModel.LoadData();
+            }
         }
 
         private void DeleteNetwork_Click(object sender, RoutedEventArgs e)
         {
             ItemViewModel vm = GetViewModel(sender);
             if (vm != null)
+            {
                 App.ViewModel.DeleteNetwork(vm.LineOne);
+                App.ViewModel.LoadData();
+            }
         }
 
         private ItemViewModel GetViewModel(object sender)
@@ -118,7 +119,7 @@ namespace Wifi.TimeRegistration
                 var ctxMenu = (ContextMenu)menuItem.Parent;
                 if (ctxMenu != null)
                 {
-                    viewModel = (ViewModels.ItemViewModel)ctxMenu.DataContext;
+                    viewModel = (ItemViewModel)ctxMenu.DataContext;
                 }
             }
 

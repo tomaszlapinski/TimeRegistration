@@ -8,7 +8,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource JumpListAlphabetSmallFontSize}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -16,8 +15,8 @@
     shell:SystemTray.IsVisible="True">
 
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <phone:Pivot Title="Wifi Time Registration">
-            <phone:PivotItem Header="Networks">
+        <phone:Pivot Title="{Binding SampleProperty}">
+            <phone:PivotItem FontSize="20">
                 <phone:LongListSelector Margin="0,0,-12,0" ItemsSource="{Binding Items}">
                     <phone:LongListSelector.ItemTemplate>
                         <DataTemplate>
@@ -38,5 +37,4 @@
             </phone:PivotItem>
         </phone:Pivot>
     </Grid>
-
 </phone:PhoneApplicationPage>

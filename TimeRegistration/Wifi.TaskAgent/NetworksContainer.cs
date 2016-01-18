@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Wifi.TaskAgent
 {
@@ -16,5 +12,6 @@ namespace Wifi.TaskAgent
         public int MinutesInWeek { get; set; }
         public string NetworkName { get; set; }
         public int WeekNumber { get; set; }
+        public int LastWeekHours { get; set; }
     }
 }
